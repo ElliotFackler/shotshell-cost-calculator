@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shotshell Cost Calculator</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 30px; background: #f0f2f5; }
+        .calc-card { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #355E3B; margin-top: 0; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.9em; color: #555; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        .results { margin-top: 20px; padding: 15px; background: #e8f0fe; border-radius: 8px; border-left: 5px solid #1a73e8; }
+        .total-val { font-weight: bold; color: #d93025; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+
+<div class="calc-card">
+    <h2>Reloading Cost Calculator</h2>
+    
+    <div class="input-group">
+        <label>Powder Price (per lb)</label>
+        <input type="number" id="pPrice" value="45" oninput="calculate()">
+    </div>
+    <div class="input-group">
+        <label>Powder Charge (grains per shell)</label>
+        <input type="number" id="pCharge" value="18" oninput="calculate()">
+    </div>
+    
+    <div class="input-group">
+        <label>Shot Price (per 25lb bag)</label>
+        <input type="number" id="sPrice" value="50" oninput="calculate()">
+    </div>
+    <div class="input-group">
+        <label>Shot Charge (oz per shell - e.g. 1.125 for 1 1/8)</label>
+        <input type="number" id="sCharge" value="1.125" oninput="calculate()">
+    </div>
+
+    <div class="input-group">
+        <label>Primer Price (per 1000)</label>
+        <input type="number" id="primPrice" value="80" oninput="calculate()">
+    </div>
+
+    <div class="input-group">
+        <label>Wad Price (per 500)</label>
+        <input type="number" id="wadPrice" value="15" oninput="calculate()">
+    </div>
+
+    <div class="input-group">
+        <label>Hull Price (per 100)</label>
+        <input type="number" id="hullPrice" value="20" oninput="calculate()">
+    </div>
+
+    <div class="results">
+        <div>Cost per Shell: <span class="total-val" id="costPerShell">$0.00</span></div>
+        <div>Cost per Box (25): <span class="total-val" id="costPerBox">$0.00</span></div>
+    </div>
+</div>
+
+<script>
+function calculate() {
+    // 1. Get Values
+    const powderPrice = parseFloat(document.getElementById('pPrice').value) || 0;
+    const powderCharge = parseFloat(document.getElementById('pCharge').value) || 0;
+    const shotPrice = parseFloat(document.getElementById('sPrice').value) || 0;
+    const shotCharge = parseFloat(document.getElementById('sCharge').value) || 0;
+    const primerPrice = parseFloat(document.getElementById('primPrice').value) || 0;
+    const wadPrice = parseFloat(document.getElementById('wadPrice').value) || 0;
+    const hullPrice = parseFloat(document.getElementById('hullPrice').value) || 0;
+
+    // 2. Calculations
+    const costPowder = (powderPrice / 7000) * powderCharge;
+    const costShot = (shotPrice / (25 * 16)) * shotCharge; // 25lbs to oz
+    const costPrimer = primerPrice / 1000;
+    const costWad = wadPrice / 100;
+    const costHull = hullPrice / 100;
+
+    const totalPerShell = costPowder + costShot + costPrimer + costWad + costHull;
+    
+    // 3. Display
+    document.getElementById('costPerShell').innerText = '$' + totalPerShell.toFixed(2);
+    document.getElementById('costPerBox').innerText = '$' + (totalPerShell * 25).toFixed(2);
+}
+
+// Run once on load
+calculate();
+</script>
+
+</body>
+</html>
