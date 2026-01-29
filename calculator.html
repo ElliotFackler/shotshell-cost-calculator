@@ -4,14 +4,22 @@
     <meta charset="UTF-8">
     <title>Shotshell Cost Calculator</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; padding: 30px; background: #f0f2f5; }
-        .calc-card { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #355E3B; margin-top: 0; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.9em; color: #555; margin-bottom: 5px; }
-        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        .results { margin-top: 20px; padding: 15px; background: #e8f0fe; border-radius: 8px; border-left: 5px solid #1a73e8; }
-        .total-val { font-weight: bold; color: #d93025; font-size: 1.2em; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #f0f2f5; color: #333; }
+        .calc-card { max-width: 550px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #355E3B; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        /* Grid for better layout */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .input-group { margin-bottom: 10px; }
+        
+        label { display: block; font-size: 0.85em; font-weight: 600; color: #666; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; transition: border 0.2s; }
+        input:focus { border-color: #355E3B; outline: none; background: #fafafa; }
+
+        .results { margin-top: 20px; padding: 20px; background: #f8fff9; border-radius: 8px; border: 1px solid #d4e8d6; display: flex; justify-content: space-around; }
+        .res-box { text-align: center; }
+        .res-label { display: block; font-size: 0.8em; color: #666; text-transform: uppercase; }
+        .total-val { font-weight: bold; color: #2e7d32; font-size: 1.5em; }
     </style>
 </head>
 <body>
@@ -19,73 +27,92 @@
 <div class="calc-card">
     <h2>Reloading Cost Calculator</h2>
     
-    <div class="input-group">
-        <label>Powder Price (per lb)</label>
-        <input type="number" id="pPrice" value="45" oninput="calculate()">
-    </div>
-    <div class="input-group">
-        <label>Powder Charge (grains per shell)</label>
-        <input type="number" id="pCharge" value="18" oninput="calculate()">
+    <div class="grid">
+        <div class="input-group">
+            <label>Powder Price ($/lb)</label>
+            <input type="number" id="pPrice" value="45" step="any" oninput="calculate()" onfocus="this.select()">
+        </div>
+        <div class="input-group">
+            <label>Powder Charge (gr)</label>
+            <input type="number" id="pCharge" value="18" step="any" oninput="calculate()" onfocus="this.select()">
+        </div>
     </div>
     
-    <div class="input-group">
-        <label>Shot Price (per 25lb bag)</label>
-        <input type="number" id="sPrice" value="50" oninput="calculate()">
-    </div>
-    <div class="input-group">
-        <label>Shot Charge (oz per shell - e.g. 1.125 for 1 1/8)</label>
-        <input type="number" id="sCharge" value="1.125" oninput="calculate()">
-    </div>
-
-    <div class="input-group">
-        <label>Primer Price (per 1000)</label>
-        <input type="number" id="primPrice" value="80" oninput="calculate()">
+    <div class="grid">
+        <div class="input-group">
+            <label>Shot Price ($/25lb)</label>
+            <input type="number" id="sPrice" value="50" step="any" oninput="calculate()" onfocus="this.select()">
+        </div>
+        <div class="input-group">
+            <label>Shot Charge (oz)</label>
+            <input type="number" id="sCharge" value="1.125" step="any" oninput="calculate()" onfocus="this.select()">
+        </div>
     </div>
 
-    <div class="input-group">
-        <label>Wad Price (per 500)</label>
-        <input type="number" id="wadPrice" value="15" oninput="calculate()">
+    <div class="grid">
+        <div class="input-group">
+            <label>Primers ($/1000)</label>
+            <input type="number" id="primPrice" value="80" step="any" oninput="calculate()" onfocus="this.select()">
+        </div>
+        <div class="input-group">
+            <label>Wads ($/500)</label>
+            <input type="number" id="wadPrice" value="15" step="any" oninput="calculate()" onfocus="this.select()">
+        </div>
     </div>
 
-    <div class="input-group">
-        <label>Hull Price (per 100)</label>
-        <input type="number" id="hullPrice" value="20" oninput="calculate()">
+    <div class="grid">
+        <div class="input-group">
+            <label>Hulls ($/100)</label>
+            <input type="number" id="hullPrice" value="0" step="any" oninput="calculate()" onfocus="this.select()">
+        </div>
+        <div class="input-group">
+            <label>Filler Wads ($/500)</label>
+            <input type="number" id="fillerWadPrice" value="0" step="any" oninput="calculate()" onfocus="this.select()">
+        </div>
     </div>
 
     <div class="results">
-        <div>Cost per Shell: <span class="total-val" id="costPerShell">$0.00</span></div>
-        <div>Cost per Box (25): <span class="total-val" id="costPerBox">$0.00</span></div>
+        <div class="res-box">
+            <span class="res-label">Per Shell</span>
+            <span class="total-val" id="costPerShell">$0.00</span>
+        </div>
+        <div class="res-box">
+            <span class="res-label">Per Box (25)</span>
+            <span class="total-val" id="costPerBox">$0.00</span>
+        </div>
     </div>
 </div>
 
 <script>
 function calculate() {
     // 1. Get Values
-    const powderPrice = parseFloat(document.getElementById('pPrice').value) || 0;
-    const powderCharge = parseFloat(document.getElementById('pCharge').value) || 0;
-    const shotPrice = parseFloat(document.getElementById('sPrice').value) || 0;
-    const shotCharge = parseFloat(document.getElementById('sCharge').value) || 0;
-    const primerPrice = parseFloat(document.getElementById('primPrice').value) || 0;
-    const wadPrice = parseFloat(document.getElementById('wadPrice').value) || 0;
-    const hullPrice = parseFloat(document.getElementById('hullPrice').value) || 0;
+    const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+    const powderPrice = getVal('pPrice');
+    const powderCharge = getVal('pCharge');
+    const shotPrice = getVal('sPrice');
+    const shotCharge = getVal('sCharge');
+    const primerPrice = getVal('primPrice');
+    const wadPrice = getVal('wadPrice');
+    const hullPrice = getVal('hullPrice');
+    const fillerWadPrice = getVal('fillerWadPrice');
 
     // 2. Calculations
     const costPowder = (powderPrice / 7000) * powderCharge;
-    const costShot = (shotPrice / (25 * 16)) * shotCharge; // 25lbs to oz
+    const costShot = (shotPrice / (25 * 16)) * shotCharge; 
     const costPrimer = primerPrice / 1000;
-    const costWad = wadPrice / 100;
+    const costWad = wadPrice / 500; // Fixed: Divisor matches label
     const costHull = hullPrice / 100;
+    const costFillerWad = fillerWadPrice / 500; // Fixed: Divisor matches label
 
-    const totalPerShell = costPowder + costShot + costPrimer + costWad + costHull;
+    const totalPerShell = costPowder + costShot + costPrimer + costWad + costHull + costFillerWad;
     
     // 3. Display
     document.getElementById('costPerShell').innerText = '$' + totalPerShell.toFixed(2);
     document.getElementById('costPerBox').innerText = '$' + (totalPerShell * 25).toFixed(2);
 }
 
-// Run once on load
 calculate();
 </script>
-
 </body>
 </html>
